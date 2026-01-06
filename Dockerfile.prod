@@ -1,12 +1,34 @@
-# Stage 1: Build
-FROM eclipse-temurin:25-jdk-alpine AS build
+# Stage 1: Build (Compilación)
+# Usamos la imagen oficial de Oracle para Java 25 para compilar
+FROM openjdk:25-slim AS build
 WORKDIR /app
-COPY . .
+
+# Copiamos el wrapper de Maven y el pom
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+# Le damos permisos de ejecución al wrapper
+RUN chmod +x mvnw
+
+# Descargamos dependencias (aprovechando el cache de capas de Docker)
+RUN ./mvnw dependency:go-offline
+
+# Copiamos el código fuente y generamos el JAR
+COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Runtime
-FROM eclipse-temurin:25-jre-alpine
+# Stage 2: Runtime (Imagen de ejecución)
+# Usamos una imagen de solo JRE (o JDK slim) para reducir el tamaño
+FROM openjdk:25-slim
 WORKDIR /app
+
+# Copiamos el JAR generado en la etapa anterior
 COPY --from=build /app/target/*.jar app.jar
+
+# Configuración de memoria para tus 4GB de RAM
+# Reservamos 1.5GB para la JVM para dejar aire al resto del VPS
+ENV JAVA_OPTS="-Xmx1536m -Xms512m"
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=${PORT:8080}"]
+
+# Ejecución limpia del JAR
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
