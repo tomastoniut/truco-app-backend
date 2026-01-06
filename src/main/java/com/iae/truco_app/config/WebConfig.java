@@ -12,8 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                     "http://localhost:5173", // Desarrollo local (Vite)
-                    "http://trucoapp.mardelplatadev.cloud/",
-                    "https://trucoapp.mardelplatadev.cloud/"
+                    "http://trucoapp.mardelplatadev.cloud",
+                    "https://trucoapp.mardelplatadev.cloud"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
