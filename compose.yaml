@@ -1,0 +1,37 @@
+services:
+  
+  truco-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: truco-app
+    env_file:
+          - .env
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    networks:
+          - postgres_net
+    
+    # LA MAGIA: Docker Compose Watch
+    develop:
+      watch:
+        # 1. Regla para SQL (Sincronizar + Reiniciar para que Flyway detecte cambios)
+        - action: sync+restart
+          path: ./src/main/resources/db
+          target: /app/src/main/resources/db
+
+        # 2. Regla para Código (Sincronizar + Reiniciar)
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+          ignore:
+            # Importante: La ruta aquí debe ser relativa al 'path' de arriba (./src)
+            - main/resources/db/
+        
+        # 3. Rebuild para el POM
+        - action: rebuild
+          path: ./pom.xml
+
+networks:
+  postgres_net:
+    external: true

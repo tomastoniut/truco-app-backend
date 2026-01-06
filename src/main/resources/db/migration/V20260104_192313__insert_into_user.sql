@@ -1,0 +1,1 @@
+insert into _user (username, password) values ('admin', 'iae2026');
