@@ -1,6 +1,7 @@
 package com.iae.truco_app.controller;
 
 import com.iae.truco_app.dto.CreateTournamentRequest;
+import com.iae.truco_app.dto.PlayerStandingsResponse;
 import com.iae.truco_app.dto.TournamentResponse;
 import com.iae.truco_app.service.TournamentService;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,15 @@ public class TournamentController {
     public ResponseEntity<List<TournamentResponse>> getAllTournaments() {
         List<TournamentResponse> tournaments = tournamentService.getAllTournaments();
         return ResponseEntity.ok(tournaments);
+    }
+    
+    @GetMapping("/{tournamentId}/standings")
+    public ResponseEntity<List<PlayerStandingsResponse>> getPlayerStandings(@PathVariable Long tournamentId) {
+        try {
+            List<PlayerStandingsResponse> standings = tournamentService.getPlayerStandings(tournamentId);
+            return ResponseEntity.ok(standings);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
