@@ -7,6 +7,8 @@ import com.iae.truco_app.dto.UpdateMatchRequest;
 import com.iae.truco_app.entity.*;
 import com.iae.truco_app.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,17 +78,27 @@ public class MatchService {
     }
     
     @Transactional(readOnly = true)
-    public List<MatchResponse> getAllMatches() {
-        return matchRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<MatchResponse> getAllMatches(Pageable pageable) {
+        return matchRepository.findAll(pageable)
+                .map(this::mapToResponse);
     }
     
     @Transactional(readOnly = true)
-    public List<MatchResponse> getMatchesByState(Long stateId) {
-        return matchRepository.findByStateMatchstate(stateId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<MatchResponse> getMatchesByState(Long stateId, Pageable pageable) {
+        return matchRepository.findByStateMatchstate(stateId, pageable)
+                .map(this::mapToResponse);
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<MatchResponse> getMatchesByTournament(Long tournamentId, Pageable pageable) {
+        return matchRepository.findByTournamentTournament(tournamentId, pageable)
+                .map(this::mapToResponse);
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<MatchResponse> getMatchesByStateAndTournament(Long stateId, Long tournamentId, Pageable pageable) {
+        return matchRepository.findByStateMatchstateAndTournamentTournament(stateId, tournamentId, pageable)
+                .map(this::mapToResponse);
     }
     
     @Transactional(readOnly = true)

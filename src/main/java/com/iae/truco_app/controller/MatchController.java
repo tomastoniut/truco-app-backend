@@ -6,6 +6,10 @@ import com.iae.truco_app.dto.MatchStateResponse;
 import com.iae.truco_app.dto.UpdateMatchRequest;
 import com.iae.truco_app.service.MatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +35,29 @@ public class MatchController {
     }
     
     @GetMapping
-    public ResponseEntity<List<MatchResponse>> getAllMatches(
-            @RequestParam(required = false) Long stateId) {
-        List<MatchResponse> matches;
-        if (stateId != null) {
-            matches = matchService.getMatchesByState(stateId);
+    public ResponseEntity<Page<MatchResponse>> getAllMatches(
+            @RequestParam(required = false) Long stateId,
+            @RequestParam(required = false) Long tournamentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "match") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection) {
+        
+        Sort sort = sortDirection.equalsIgnoreCase("ASC") 
+                ? Sort.by(sortBy).ascending() 
+                : Sort.by(sortBy).descending();
+        
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        Page<MatchResponse> matches;
+        if (stateId != null && tournamentId != null) {
+            matches = matchService.getMatchesByStateAndTournament(stateId, tournamentId, pageable);
+        } else if (stateId != null) {
+            matches = matchService.getMatchesByState(stateId, pageable);
+        } else if (tournamentId != null) {
+            matches = matchService.getMatchesByTournament(tournamentId, pageable);
         } else {
-            matches = matchService.getAllMatches();
+            matches = matchService.getAllMatches(pageable);
         }
         return ResponseEntity.ok(matches);
     }
