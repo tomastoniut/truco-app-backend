@@ -12,7 +12,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                     "http://localhost:5173", // Desarrollo local (Vite)
-                    "https://truco-app-frontend-lc86x4bzp-tomastoniuts-projects.vercel.app/" // Reemplazá con tu URL de Vercel
+                    "http://trucoapp.mardelplatadev.cloud/",
+                    "https://trucoapp.mardelplatadev.cloud/"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
