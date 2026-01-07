@@ -2,6 +2,7 @@ package com.iae.truco_app.service;
 
 import com.iae.truco_app.dto.CreatePlayerRequest;
 import com.iae.truco_app.dto.PlayerResponse;
+import com.iae.truco_app.dto.UpdatePlayerRequest;
 import com.iae.truco_app.entity.Player;
 import com.iae.truco_app.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +39,20 @@ public class PlayerService {
                         player.getName()
                 ))
                 .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public PlayerResponse updatePlayer(Long playerId, UpdatePlayerRequest request) {
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+        
+        player.setName(request.getName());
+        
+        Player updatedPlayer = playerRepository.save(player);
+        
+        return new PlayerResponse(
+                updatedPlayer.getPlayer(),
+                updatedPlayer.getName()
+        );
     }
 }
