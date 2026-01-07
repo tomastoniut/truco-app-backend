@@ -120,6 +120,9 @@ public class MatchService {
         match.setScoreVisitorTeam(request.getScoreVisitorTeam());
         
         // Verificar si algún equipo llegó a 30 puntos
+        if (match.getState().getMatchstate().equals(MatchState.States.CANCELLED.getValue())) {
+            throw new RuntimeException("No se puede actualizar un partido cancelado");
+        }
         if (request.getScoreLocalTeam() >= 30 || request.getScoreVisitorTeam() >= 30) {
             // Cambiar estado a "Finalizado" (id = 3)
             MatchState finishedState = matchStateRepository.findById(MatchState.States.COMPLETED.getValue())
@@ -145,6 +148,34 @@ public class MatchService {
         
         Match updatedMatch = matchRepository.save(match);
         return mapToResponse(updatedMatch);
+    }
+    
+    @Transactional
+    public MatchResponse cancelMatch(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+        
+        // Verificar que el partido no esté ya finalizado o cancelado
+        if (match.getState().getMatchstate().equals(MatchState.States.COMPLETED.getValue())) {
+            throw new RuntimeException("No se puede cancelar un partido finalizado");
+        }
+        
+        if (match.getState().getMatchstate().equals(MatchState.States.CANCELLED.getValue())) {
+            throw new RuntimeException("El partido ya está cancelado");
+        }
+        
+        // Cambiar estado a "Cancelado" (id = 4)
+        MatchState cancelledState = matchStateRepository.findById(MatchState.States.CANCELLED.getValue())
+                .orElseThrow(() -> new RuntimeException("Estado 'Cancelado' no encontrado"));
+        
+        match.setState(cancelledState);
+        match.setWinnerTeam(null); // Limpiar el ganador si existe
+        match.setScoreLocalTeam(0); // Reiniciar puntajes
+        match.setScoreVisitorTeam(0);
+
+        
+        Match cancelledMatch = matchRepository.save(match);
+        return mapToResponse(cancelledMatch);
     }
     
     private MatchResponse mapToResponse(Match match) {

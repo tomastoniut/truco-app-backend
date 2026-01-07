@@ -74,6 +74,16 @@ public class MatchController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<MatchResponse> cancelMatch(@PathVariable Long id) {
+        try {
+            MatchResponse response = matchService.cancelMatch(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 
     @GetMapping("/states")
     public ResponseEntity<List<MatchStateResponse>> getAllMatchStates() {
