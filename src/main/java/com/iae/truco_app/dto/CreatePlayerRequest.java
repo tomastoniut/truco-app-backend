@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreatePlayerRequest {
     private String name;
+    private Long tournamentId;
 }

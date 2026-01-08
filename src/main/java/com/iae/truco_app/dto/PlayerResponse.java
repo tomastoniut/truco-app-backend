@@ -12,4 +12,6 @@ import lombok.Setter;
 public class PlayerResponse {
     private Long id;
     private String name;
+    private Long tournamentId;
+    private String tournamentName;
 }

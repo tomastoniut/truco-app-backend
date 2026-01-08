@@ -25,6 +25,10 @@ public class Player {
     @Column(nullable = false)
     private String name;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament", nullable = false)
+    private Tournament tournament;
+    
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamPlayer> teamPlayers = new ArrayList<>();
 }
