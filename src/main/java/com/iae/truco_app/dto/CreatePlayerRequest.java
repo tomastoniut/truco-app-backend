@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CreatePlayerRequest {
     private String name;
     private Long tournamentId;
+    private Boolean casualPlayer = false;
 }

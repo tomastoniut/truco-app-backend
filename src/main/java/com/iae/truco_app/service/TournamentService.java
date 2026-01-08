@@ -73,9 +73,13 @@ public class TournamentService {
             Team visitorTeam = match.getVisitorTeam();
             Team winnerTeam = match.getWinnerTeam();
             
-            // Procesar jugadores del equipo local
+            // Procesar jugadores del equipo local (excluir jugadores casuales)
             for (TeamPlayer tp : localTeam.getTeamPlayers()) {
                 Player player = tp.getPlayer();
+                // Saltar jugadores casuales
+                if (player.getCasualPlayer() != null && player.getCasualPlayer()) {
+                    continue;
+                }
                 PlayerStandingsData data = playerStats.computeIfAbsent(
                         player.getPlayer(),
                         k -> new PlayerStandingsData(player.getPlayer(), player.getName())
@@ -88,9 +92,13 @@ public class TournamentService {
                 }
             }
             
-            // Procesar jugadores del equipo visitante
+            // Procesar jugadores del equipo visitante (excluir jugadores casuales)
             for (TeamPlayer tp : visitorTeam.getTeamPlayers()) {
                 Player player = tp.getPlayer();
+                // Saltar jugadores casuales
+                if (player.getCasualPlayer() != null && player.getCasualPlayer()) {
+                    continue;
+                }
                 PlayerStandingsData data = playerStats.computeIfAbsent(
                         player.getPlayer(),
                         k -> new PlayerStandingsData(player.getPlayer(), player.getName())

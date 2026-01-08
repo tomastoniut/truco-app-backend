@@ -29,6 +29,7 @@ public class PlayerService {
         Player player = new Player();
         player.setName(request.getName());
         player.setTournament(tournament);
+        player.setCasualPlayer(request.getCasualPlayer() != null ? request.getCasualPlayer() : false);
         
         Player savedPlayer = playerRepository.save(player);
         
@@ -36,7 +37,8 @@ public class PlayerService {
                 savedPlayer.getPlayer(),
                 savedPlayer.getName(),
                 savedPlayer.getTournament().getTournament(),
-                savedPlayer.getTournament().getName()
+                savedPlayer.getTournament().getName(),
+                savedPlayer.getCasualPlayer()
         );
     }
     
@@ -47,7 +49,8 @@ public class PlayerService {
                         player.getPlayer(),
                         player.getName(),
                         player.getTournament().getTournament(),
-                        player.getTournament().getName()
+                        player.getTournament().getName(),
+                        player.getCasualPlayer()
                 ))
                 .collect(Collectors.toList());
     }
@@ -58,6 +61,9 @@ public class PlayerService {
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
         
         player.setName(request.getName());
+        if (request.getCasualPlayer() != null) {
+            player.setCasualPlayer(request.getCasualPlayer());
+        }
         
         Player updatedPlayer = playerRepository.save(player);
         
@@ -65,7 +71,8 @@ public class PlayerService {
                 updatedPlayer.getPlayer(),
                 updatedPlayer.getName(),
                 updatedPlayer.getTournament().getTournament(),
-                updatedPlayer.getTournament().getName()
+                updatedPlayer.getTournament().getName(),
+                updatedPlayer.getCasualPlayer()
         );
     }
 }

@@ -14,4 +14,5 @@ public class PlayerResponse {
     private String name;
     private Long tournamentId;
     private String tournamentName;
+    private Boolean casualPlayer;
 }

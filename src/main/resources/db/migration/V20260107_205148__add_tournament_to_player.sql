@@ -1,6 +1,5 @@
 -- Add tournament column to player table
 ALTER TABLE player ADD COLUMN tournament BIGINT;
-
 -- Add foreign key constraint
 ALTER TABLE player ADD CONSTRAINT fk_player_tournament FOREIGN KEY (tournament) REFERENCES tournament(tournament);
 

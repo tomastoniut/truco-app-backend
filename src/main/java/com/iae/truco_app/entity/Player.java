@@ -29,6 +29,9 @@ public class Player {
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
     
+    @Column(name = "casualplayer", nullable = false)
+    private Boolean casualPlayer = false;
+    
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamPlayer> teamPlayers = new ArrayList<>();
 }

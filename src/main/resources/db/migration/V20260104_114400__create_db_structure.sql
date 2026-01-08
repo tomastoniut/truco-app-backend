@@ -72,7 +72,7 @@ CREATE INDEX idx_match_date ON "match"("date");
 
 -- Insert default match states
 INSERT INTO matchstate (description) VALUES 
-    ('PENDING'),
-    ('IN_PROGRESS'),
-    ('COMPLETED'),
-    ('CANCELLED');
+    ('Pendiente'),
+    ('En Progreso'),
+    ('Completado'),
+    ('Cancelado');
