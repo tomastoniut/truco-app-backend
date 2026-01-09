@@ -43,8 +43,16 @@ public class PlayerService {
     }
     
     @Transactional(readOnly = true)
-    public List<PlayerResponse> getAllPlayers() {
-        return playerRepository.findAll().stream()
+    public List<PlayerResponse> getAllPlayers(Long tournamentId) {
+        List<Player> players;
+        
+        if (tournamentId != null) {
+            players = playerRepository.findByTournament_Tournament(tournamentId);
+        } else {
+            players = playerRepository.findAll();
+        }
+        
+        return players.stream()
                 .map(player -> new PlayerResponse(
                         player.getPlayer(),
                         player.getName(),

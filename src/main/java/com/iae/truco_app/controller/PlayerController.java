@@ -26,8 +26,9 @@ public class PlayerController {
     }
     
     @GetMapping
-    public ResponseEntity<List<PlayerResponse>> getAllPlayers() {
-        List<PlayerResponse> players = playerService.getAllPlayers();
+    public ResponseEntity<List<PlayerResponse>> getAllPlayers(
+            @RequestParam(required = false) Long tournamentId) {
+        List<PlayerResponse> players = playerService.getAllPlayers(tournamentId);
         return ResponseEntity.ok(players);
     }
     
