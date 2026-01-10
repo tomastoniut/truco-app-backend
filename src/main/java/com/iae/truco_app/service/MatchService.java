@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class MatchService {
         
         // Crear partido
         Match match = new Match();
-        match.setDate(request.getDate());
+        match.setDate(LocalDate.now());
         match.setLocalTeam(localTeam);
         match.setVisitorTeam(visitorTeam);
         match.setTournament(tournament);
