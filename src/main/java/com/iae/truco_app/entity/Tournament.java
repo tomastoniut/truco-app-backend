@@ -33,5 +33,10 @@ public class Tournament {
     
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> players = new ArrayList<>();
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String code;
     
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTournament> accessibleByUsers = new ArrayList<>();
 }

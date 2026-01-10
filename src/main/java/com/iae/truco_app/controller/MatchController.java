@@ -3,6 +3,7 @@ package com.iae.truco_app.controller;
 import com.iae.truco_app.dto.CreateMatchRequest;
 import com.iae.truco_app.dto.MatchResponse;
 import com.iae.truco_app.dto.MatchStateResponse;
+import com.iae.truco_app.dto.PageResponse;
 import com.iae.truco_app.dto.UpdateMatchRequest;
 import com.iae.truco_app.service.MatchService;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +36,13 @@ public class MatchController {
     }
     
     @GetMapping
-    public ResponseEntity<Page<MatchResponse>> getAllMatches(
+    public ResponseEntity<PageResponse<MatchResponse>> getAllMatches(
             @RequestParam(required = false) Long stateId,
             @RequestParam(required = false) Long tournamentId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "match") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDirection) {
+            @RequestParam(defaultValue = "10") int size) {
         
-        Sort sort = sortDirection.equalsIgnoreCase("ASC") 
-                ? Sort.by(sortBy).ascending() 
-                : Sort.by(sortBy).descending();
+        Sort sort = Sort.by("match").descending();
         
         Pageable pageable = PageRequest.of(page, size, sort);
         
@@ -59,7 +56,20 @@ public class MatchController {
         } else {
             matches = matchService.getAllMatches(pageable);
         }
-        return ResponseEntity.ok(matches);
+        
+        // Convertir Page a PageResponse
+        PageResponse<MatchResponse> response = new PageResponse<>(
+            matches.getContent(),
+            matches.getNumber(),
+            matches.getSize(),
+            matches.getTotalElements(),
+            matches.getTotalPages(),
+            matches.isFirst(),
+            matches.isLast(),
+            matches.isEmpty()
+        );
+        
+        return ResponseEntity.ok(response);
     }
     
     

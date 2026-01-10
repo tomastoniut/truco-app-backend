@@ -13,4 +13,5 @@ public class TournamentResponse {
     private Long id;
     private String name;
     private String createdBy;
+    private String tournamentCode;
 }

@@ -29,4 +29,7 @@ public class User {
     
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
     private List<Tournament> tournaments = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTournament> accessibleTournaments = new ArrayList<>();
 }

@@ -13,10 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
 public class TournamentService {
+    
+    private static final String CODE_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final int CODE_LENGTH = 6;
+    private static final SecureRandom random = new SecureRandom();
     
     private final TournamentRepository tournamentRepository;
     private final UserRepository userRepository;
@@ -30,14 +35,50 @@ public class TournamentService {
         Tournament tournament = new Tournament();
         tournament.setName(request.getName());
         tournament.setCreatedBy(user);
+        tournament.setCode(generateUniqueCode());
         
         Tournament savedTournament = tournamentRepository.save(tournament);
         
         return new TournamentResponse(
                 savedTournament.getTournament(),
                 savedTournament.getName(),
-                savedTournament.getCreatedBy().getUsername()
+                savedTournament.getCreatedBy().getUsername(),
+                savedTournament.getCode()
         );
+    }
+    
+    /**
+     * Genera un código único de 6 caracteres (mayúsculas y números)
+     * @return código único
+     */
+    private String generateUniqueCode() {
+        String code;
+        int attempts = 0;
+        int maxAttempts = 100;
+        
+        do {
+            code = generateRandomCode();
+            attempts++;
+            
+            if (attempts >= maxAttempts) {
+                throw new RuntimeException("No se pudo generar un código único después de " + maxAttempts + " intentos");
+            }
+        } while (tournamentRepository.existsByCode(code));
+        
+        return code;
+    }
+    
+    /**
+     * Genera un código aleatorio de 6 caracteres (A-Z, 0-9)
+     * @return código aleatorio
+     */
+    private String generateRandomCode() {
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            int index = random.nextInt(CODE_CHARACTERS.length());
+            code.append(CODE_CHARACTERS.charAt(index));
+        }
+        return code.toString();
     }
     
     @Transactional(readOnly = true)
@@ -46,7 +87,8 @@ public class TournamentService {
                 .map(tournament -> new TournamentResponse(
                         tournament.getTournament(),
                         tournament.getName(),
-                        tournament.getCreatedBy().getUsername()
+                        tournament.getCreatedBy().getUsername(),
+                        tournament.getCode()
                 ))
                 .collect(Collectors.toList());
     }
