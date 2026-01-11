@@ -29,9 +29,14 @@ public class TournamentController {
         }
     }
     
+    /**
+     * Obtiene la lista de torneos, opcionalmente filtrando por id de usuario creador
+     * @param createdById id del usuario creador (opcional)
+     * @return lista de torneos
+     */
     @GetMapping
-    public ResponseEntity<List<TournamentResponse>> getAllTournaments() {
-        List<TournamentResponse> tournaments = tournamentService.getAllTournaments();
+    public ResponseEntity<List<TournamentResponse>> getAllTournaments(@RequestParam(value = "createdById", required = false) Long createdById) {
+        List<TournamentResponse> tournaments = tournamentService.getTournamentsByCreatedById(createdById);
         return ResponseEntity.ok(tournaments);
     }
     

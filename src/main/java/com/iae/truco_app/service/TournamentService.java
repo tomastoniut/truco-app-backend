@@ -81,9 +81,20 @@ public class TournamentService {
         return code.toString();
     }
     
+    /**
+     * Obtiene torneos, opcionalmente filtrando por id de usuario creador
+     * @param createdById id del usuario creador (opcional)
+     * @return lista de TournamentResponse
+     */
     @Transactional(readOnly = true)
-    public List<TournamentResponse> getAllTournaments() {
-        return tournamentRepository.findAll().stream()
+    public List<TournamentResponse> getTournamentsByCreatedById(Long createdById) {
+        List<Tournament> tournaments;
+        if (createdById != null) {
+            tournaments = tournamentRepository.findByCreatedBy(createdById);
+        } else {
+            tournaments = tournamentRepository.findAll();
+        }
+        return tournaments.stream()
                 .map(tournament -> new TournamentResponse(
                         tournament.getTournament(),
                         tournament.getName(),
